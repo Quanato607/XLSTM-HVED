@@ -22,13 +22,13 @@ pip install requirements.txt
 python Pretrain.py
 ```
 
-### train XLSTM-HVED
+### Train XLSTM-HVED
 ```
 python train.py
 ```
 
 
-### evaluate the model
+### Evaluate the model
 ```
 python test.py
 ```
