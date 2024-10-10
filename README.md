@@ -5,3 +5,30 @@ The **XLSTM-HVED** is a PyTorch-based model for cross-modal brain tumor segmenta
 ![](./imgs/model.png)
 <br><br>
 
+## Pre-requisties
+- Linux
+- python==3.10
+- NVIDIA GPU (memory>=18G) + CUDA cuDNN
+
+## How to train
+### Preparation of the data and environment
+You only need to put the BraTS2024 Dataset into ./Dataset and divide it to train and test. Then use requirements.txt to install environment.
+```
+pip install requirements.txt
+```
+
+### Pretrain Recon decoder of XLSTM-HVED
+```
+python Pretrain.py
+```
+
+### train XLSTM-HVED
+```
+python train.py
+```
+
+
+### evaluate the model
+```
+python test.py
+```
