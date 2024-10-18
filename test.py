@@ -22,7 +22,7 @@ SUBSETS_MODALITIES = all_subsets(MODALITIES)
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Test a model")
-    parser.add_argument("--model_name", type=str, default='U_HVEDDuSFEmViLDFNet3D', help="模型保存路径") 
+    parser.add_argument("--model_name", type=str, default='XLSTM_HVED_woME_VAEback_ViLAtt', help="模型保存路径") 
     parser.add_argument("--epoch", type=int, default=100, help="model epoch")
     parser.add_argument("--n_class", type=int, default=3, help="number of class")
     parser.add_argument("--save_dir", default='results_eval', help="the dir to save models and logs")
@@ -30,7 +30,7 @@ def parse_args():
     parser.add_argument("--valid_batch", type=int, default=1, help="batch size for inference")
     parser.add_argument("--d_factor", type=int, default=4, help="stride is crop_size // d_factor ")
     parser.add_argument("--seed", type=int, default=1, help="seed")
-    parser.add_argument("--pretrain_weights", type=str, default='/root/home/data/ZSH/RA-HVED-main/results/U_HVEDDuSFEmViLDFNet3D/best_dice_ckpt.pth.tar', help="预训练权重保存路径")
+    parser.add_argument("--pretrain_weights", type=str, default='/root/home/data/ZSH/RA-HVED-main/results/XLSTM_HVED_woME_VAEback_ViLAtt/best_dice_ckpt.pth.tar', help="预训练权重保存路径")
     parser.add_argument("--valid_dir", type=str, default='/root/autodl-tmp/BraTS2024/test', help="训练数据集地址")
     args = parser.parse_args()
     
@@ -64,6 +64,7 @@ def main():
     epoch = args.epoch
     model = classic_models.find_model_using_name(args.model_name)(1, n_class, multi_stream=4, fusion_level=4, shared_recon=True,
                     recon_skip=True, MVAE_reduction=True, final_sigmoid=True, f_maps=4, layer_order='ilc')
+    weight = torch.load(args.pretrain_weights,map_location=torch.device('cpu'))
     model.load_state_dict(torch.load(args.pretrain_weights)['model_sd'], strict=False)
     model.eval()
     model.cuda()

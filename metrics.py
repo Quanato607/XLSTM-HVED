@@ -211,24 +211,36 @@ class getHausdorff_KD:
             input_roi = input > 0
             target_roi = target > 0
 
-            if region == 'TC':
-                input_roi = input_roi * (input != 2)
-                target_roi = target_roi * (target != 2)
-            elif region == 'EC':
-                input_roi = (input == 3)
-                target_roi = (target == 3)
+            # 处理 WT（Whole Tumor）
+            input_roi = input[:,1]  # 使用第 0 通道预测 WT
+            target_roi = (target >= 1) & (target <= 3)  # 选择 target 中标签 1 到 3 的区域作为 WT
+
+            # 处理 TC（Tumor Core）
+            input_roi = input[:,2]  # 使用第 1 通道预测 TC
+            target_roi = (target == 1) | (target == 2)  # 选择 target 中标签 1 和 2 的区域作为 TC
+
+            # 处理 ET（Enhancing Tumor）
+            input_roi = input[:,0]  # 使用第 2 通道预测 ET
+            target_roi = (target == 1)  # 选择 target 中标签 1 的区域作为 ET
+
         elif mode == 'sigmoid':
+            # sigmoid
             input = (input > 0.5)
 
             if region == 'WT':
-                input_roi = input[:, 0]
-                target_roi = target[:, 0]
+                # WT 包含所有通道的组合 (ET, NETC, CC, ED)
+                input_roi = input[:,1]  # 使用第 0 通道预测 WT
+                target_roi = (target[:,0] | target[:,1] | target[:,2] | target[:,3])
+
             elif region == 'TC':
-                input_roi = input[:, 1]
-                target_roi = target[:, 1]
-            elif region == 'EC':
-                input_roi = input[:, 2]
-                target_roi = target[:, 2]
+                # TC 包含前 3 个通道 (ET, NETC, CC)
+                input_roi = input[:,2]  # 使用第 1 通道预测 TC
+                target_roi = (target[:,0] | target[:,1] | target[:,2])
+
+            elif region == 'ET':
+                # ET 只包含第 0 通道
+                input_roi = input[:,0]  # 使用第 2 通道预测 ET
+                target_roi = target[:,0]
 
         # Convert input and target to float tensors
         input_roi = input_roi.float()

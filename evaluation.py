@@ -6,7 +6,7 @@ import SimpleITK as sitk
 from itertools import chain, combinations
 from utils import prepare_validation
 from metrics import DiceRegion, DiceCoefficient, getHausdorff, getHausdorff_KD
-from RA_HVED import U_HVEDNet3D, U_HVEDConvNet3D, AbstractFusion3DUNet
+from RA_HVED import U_HVEDNet3D, U_HVEDConvNet3D, AbstractFusion3DUNet, AbstractHVED
 from U_Hemis import U_HeMIS
 from medpy.metric.binary import hd95
 """
@@ -338,7 +338,7 @@ def eval_overlap(validloader, model, subset_idx=14, draw=None, patch_size=80, ov
                                 pred = 0
                                 
                                 for k in range(draw):
-                                    if isinstance(model, AbstractFusion3DUNet):
+                                    if isinstance(model, AbstractFusion3DUNet) or isinstance(model, AbstractHVED):
                                         draw_pred, _ = model(batch_crop, subset_idx_list=[subset_idx], valid=valid) # crop_image
                                     elif isinstance(model, U_HeMIS):
                                         draw_pred, _ = model(batch_crop)
@@ -363,7 +363,7 @@ def eval_overlap(validloader, model, subset_idx=14, draw=None, patch_size=80, ov
                     batch_crop = torch.cat(batch_crop).float().to('cuda')
                     pred = 0
                     for k in range(draw):
-                        if isinstance(model, AbstractFusion3DUNet):
+                        if isinstance(model, AbstractFusion3DUNet) or isinstance(model, AbstractHVED):
                             draw_pred, _ = model(batch_crop, subset_idx_list=[subset_idx], valid=valid) # crop_image
                         elif isinstance(model, U_HeMIS):
                             draw_pred, _ = model(batch_crop)
@@ -547,7 +547,7 @@ def eval_overlap_isles(validloader, model, subset_idx=14, patch_size=80, overlap
                             if len(base_info) == batch_size:
                                 base_info = np.stack(base_info)
                                 batch_crop = torch.cat(batch_crop).float().to('cuda')
-                                if isinstance(model, AbstractFusion3DUNet):
+                                if isinstance(model, AbstractFusion3DUNet) or isinstance(model, AbstractHVED):
                                     pred, _ = model(batch_crop, subset_idx_list=[subset_idx], valid=True) # crop_image
                                 elif isinstance(model, U_HeMIS):
                                     pred, _ = model(batch_crop)
@@ -568,7 +568,7 @@ def eval_overlap_isles(validloader, model, subset_idx=14, patch_size=80, overlap
                 if len(base_info) != 0:
                     base_info = np.stack(base_info)
                     batch_crop = torch.cat(batch_crop).float().to('cuda')
-                    if isinstance(model, AbstractFusion3DUNet):
+                    if isinstance(model, AbstractFusion3DUNet) or isinstance(model, AbstractHVED):
                         pred, _ = model(batch_crop, subset_idx_list=[subset_idx], valid=True) # crop_image
                     elif isinstance(model, U_HeMIS):
                         pred, _ = model(batch_crop)
@@ -712,7 +712,7 @@ def eval_overlap_recon(validloader, model, subset_idx=14, draw=None, patch_size=
                                 recon_output = 0
                                 
                                 for k in range(draw):
-                                    if isinstance(model, AbstractFusion3DUNet):
+                                    if isinstance(model, AbstractFusion3DUNet) or isinstance(model, AbstractHVED):
                                         draw_pred, _, draw_recon = model(batch_crop, subset_idx_list=[subset_idx], recon=True, valid=valid) # crop_image
                                     elif isinstance(model, U_HeMIS):
                                         drop_batch = drop.repeat(len(base_info), 1)
@@ -737,7 +737,7 @@ def eval_overlap_recon(validloader, model, subset_idx=14, draw=None, patch_size=
                     batch_crop = torch.cat(batch_crop).float().to('cuda')
                     recon_output = 0
                     for k in range(draw):
-                        if isinstance(model, AbstractFusion3DUNet):
+                        if isinstance(model, AbstractFusion3DUNet) or isinstance(model, AbstractHVED):
                             draw_pred, _, draw_recon = model(batch_crop, subset_idx_list=[subset_idx], recon=True, valid=valid) # crop_image
                         elif isinstance(model, U_HeMIS):
                             drop_batch = drop.repeat(len(base_info), 1)

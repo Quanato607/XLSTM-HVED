@@ -273,9 +273,9 @@ class SegToMask:
 #         results = [mask1, mask2, mask3, mask4]
         
         # 3 mask -> sigmoid
-        mask1 = (m > 0).astype('uint8') # WT
-        mask2 = (m > 0)*(m != 2).astype('uint8') # TC 
-        mask3 = (m == 4).astype('uint8') # ET
+        mask1 = (m > 0).astype('uint8')  # WT，所有非背景区域
+        mask2 = ((m == 1) | (m == 2) | (m == 3)).astype('uint8')  # TC，包含标签 1 和 2
+        mask3 = (m == 1).astype('uint8')  # ET，增强肿瘤应该是标签 1
         results = [mask1, mask2, mask3]
 
         return img, np.stack(results, axis=0)

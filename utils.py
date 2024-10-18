@@ -99,7 +99,7 @@ def save_loss_and_metrics_csv(pathname, epoch, tloss, vloss, mean_dice, mean_hd9
         writer = csv.writer(csvfile)
         writer.writerow([epoch, tloss, vloss, mean_dice] + eval_region_dice_scores + [mean_hd95] + eval_region_hd95_scores)  # 写入每个 epoch 的损失和指标
 
-def load_or_initialize_training(model, optimizer, latest_ckpt_path, train_with_val=False, pretrain_weights='', pretrain=False):
+def load_or_initialize_training(model, optimizer, latest_ckpt_path, train_with_val=False, pretrain_weights='', pretrain=False, freeze_weights=''):
     """Loads training checkpoint if it exists, or initializes training from scratch.
 
     Args:
@@ -150,6 +150,13 @@ def load_or_initialize_training(model, optimizer, latest_ckpt_path, train_with_v
                 best_dice = checkpoint['dice']
             # best_hd95 = checkpoint['hd95']
         print(f'Checkpoint loaded. Will continue training from epoch {epoch_start}.')
+
+    if freeze_weights != None:
+        for freeze_weight in freeze_weights:
+            for name, param in model.named_parameters():
+                if freeze_weight in name:
+                    print(f"Freezing parameter: {name}")
+                    param.requires_grad = False
 
     if train_with_val:
         if not pretrain:
@@ -566,3 +573,9 @@ def convert_to_numpy(input, target):
     target = target.detach().cpu().numpy()  # 5D
 
     return input, target
+
+if __name__ == '__main__':
+    for i in range(100):
+        subset_size = np.random.choice(range(1,4), 1)
+        subset_index_list = subset_idx(subset_size)
+        print(f'subset_size:{subset_size} || subet_index_list:{subset_index_list}')
