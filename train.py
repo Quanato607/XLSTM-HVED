@@ -37,7 +37,7 @@ def parse_args():
     """
     parser = argparse.ArgumentParser(description="Train a model")
     # parser.add_argument("model_name", type=str, default='U_HVEDConvNet3D', help="要训练的模型名称")
-    parser.add_argument("--num_epochs", type=int, default=3000, help="总训练轮数")
+    parser.add_argument("--num_epochs", type=int, default=300, help="总训练轮数")
     parser.add_argument("--n_class", type=int, default=3, help="类别数量")
     parser.add_argument("--learning_rate", type=float, default=0.0001, help="初始学习率")
     parser.add_argument("--weight_adv", type=float, default=0.1, help="对抗损失的权重")
